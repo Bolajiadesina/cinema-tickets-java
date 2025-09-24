@@ -1,5 +1,7 @@
 package uk.gov.dwp.uc.pairtest.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.dwp.uc.pairtest.domain.TicketSummary;
@@ -7,41 +9,49 @@ import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 
 @Component
 public class TicketProcessor {
+    Logger logger= LoggerFactory.getLogger(TicketProcessor.class);
 
     @Value("${CHILD_TICKET_PRICE}")
     private int childTicketPrice;
     @Value("${ADULT_TICKET_PRICE}")
     private int adultTicketPrice;
 
-    public TicketSummary processTickets(TicketTypeRequest[] ticketRequests) {
+ 
+    public TicketSummary processTickets(TicketTypeRequest... ticketTypeRequests) {
 
+        logger.info("Processing ticket requests...");
 
+        logger.debug("Child Ticket Price: {}", childTicketPrice);
+        logger.debug("Adult Ticket Price: {}", adultTicketPrice);
         int totalTickets = 0;
+        int totalSeats = 0;
+        int totalPrice = 0;
+        int infantTickets = 0;
         int adultTickets = 0;
         int childTickets = 0;
-        int infantTickets = 0;
-        int totalAmountToPay = 0;
 
-        for (TicketTypeRequest request : ticketRequests) {
+        for (TicketTypeRequest request : ticketTypeRequests) {
             int numberOfTickets = request.getNoOfTickets();
             totalTickets += numberOfTickets;
 
             switch (request.getTicketType()) {
                 case ADULT:
+                    totalPrice += numberOfTickets * adultTicketPrice;
+                    totalSeats += numberOfTickets;
                     adultTickets += numberOfTickets;
-                    totalAmountToPay += numberOfTickets * adultTicketPrice;
                     break;
                 case CHILD:
+                    totalPrice += numberOfTickets * childTicketPrice;
+                    totalSeats += numberOfTickets;
                     childTickets += numberOfTickets;
-                    totalAmountToPay += numberOfTickets * childTicketPrice;
                     break;
                 case INFANT:
+                    // Infants do not pay and are not allocated a seat.
                     infantTickets += numberOfTickets;
                     break;
             }
         }
-
-        return new TicketSummary(totalTickets, adultTickets, childTickets, infantTickets, totalAmountToPay);
+        return new TicketSummary(totalTickets, totalSeats, totalPrice, adultTickets, childTickets, infantTickets);
     }
-
+    
 }

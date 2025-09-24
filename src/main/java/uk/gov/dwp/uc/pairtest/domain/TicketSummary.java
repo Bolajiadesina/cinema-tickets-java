@@ -11,16 +11,18 @@ public class TicketSummary {
     private final int childTickets;
     @NotNull
     private final int infantTickets;
-    @NotNull
-    private final int totalAmountToPay;
 
-    public TicketSummary(int totalTickets, int adultTickets, int childTickets, int infantTickets,
-            int totalAmountToPay) {
+    private final int totalSeats;
+    private final int totalPrice;
+
+    public TicketSummary(int totalTickets, int totalSeats, int totalPrice, int adultTickets, int childTickets,
+            int infantTickets) {
         this.totalTickets = totalTickets;
         this.adultTickets = adultTickets;
         this.childTickets = childTickets;
         this.infantTickets = infantTickets;
-        this.totalAmountToPay = totalAmountToPay;
+        this.totalSeats = totalSeats;
+        this.totalPrice = totalPrice;
     }
 
     public int getTotalTickets() {
@@ -39,7 +41,10 @@ public class TicketSummary {
         return infantTickets;
     }
 
-    public int getTotalAmountToPay() {
-        return totalAmountToPay;
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+    public int getTotalSeats() {
+        return totalSeats;
     }
 }
